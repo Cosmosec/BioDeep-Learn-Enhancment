@@ -267,3 +267,185 @@ class MultiheadAttention(nn.Module):
         return (
             x.reshape(batch_size, n_tokens, self.n_heads, d_head)
             .transpose(1, 2)
+            .reshape(batch_size * self.n_heads, n_tokens, d_head)
+        )
+
+    def forward(
+        self,
+        x_q: Tensor,
+        x_kv: Tensor,
+        key_compression: Optional[nn.Linear],
+        value_compression: Optional[nn.Linear],
+    ) -> Tuple[Tensor, Dict[str, Tensor]]:
+        """Perform the forward pass.
+
+        Args:
+            x_q: query tokens
+            x_kv: key-value tokens
+            key_compression: Linformer-style compression for keys
+            value_compression: Linformer-style compression for values
+        Returns:
+            (tokens, attention_stats)
+        """
+        assert _all_or_none(
+            [key_compression, value_compression]
+        ), 'If key_compression is (not) None, then value_compression must (not) be None'
+        q, k, v = self.W_q(x_q), self.W_k(x_kv), self.W_v(x_kv)
+        for tensor in [q, k, v]:
+            assert tensor.shape[-1] % self.n_heads == 0, _INTERNAL_ERROR_MESSAGE
+        if key_compression is not None:
+            k = key_compression(k.transpose(1, 2)).transpose(1, 2)
+            v = value_compression(v.transpose(1, 2)).transpose(1, 2)  # type: ignore
+
+        batch_size = len(q)
+        d_head_key = k.shape[-1] // self.n_heads
+        d_head_value = v.shape[-1] // self.n_heads
+        n_q_tokens = q.shape[1]
+
+        q = self._reshape(q)
+        k = self._reshape(k)
+        attention_logits = q @ k.transpose(1, 2) / math.sqrt(d_head_key)
+        attention_probs = F.softmax(attention_logits, dim=-1)
+        if self.dropout is not None:
+            attention_probs = self.dropout(attention_probs)
+        x = attention_probs @ self._reshape(v)
+        x = (
+            x.reshape(batch_size, self.n_heads, n_q_tokens, d_head_value)
+            .transpose(1, 2)
+            .reshape(batch_size, n_q_tokens, self.n_heads * d_head_value)
+        )
+        if self.W_out is not None:
+            x = self.W_out(x)
+        return x, {
+            'attention_logits': attention_logits,
+            'attention_probs': attention_probs,
+        }
+
+
+class FT_Transformer(nn.Module):
+    """Transformer with extra features.
+
+    This module is the backbone of `FTTransformer`."""
+
+    WARNINGS = {'first_prenormalization': True, 'prenormalization': True}
+
+    class FFN(nn.Module):
+        """The Feed-Forward Network module used in every `Transformer` block."""
+
+        def __init__(
+            self,
+            *,
+            d_token: int,
+            d_hidden: int,
+            bias_first: bool,
+            bias_second: bool,
+            dropout: float,
+            activation: ModuleType,
+        ):
+            super().__init__()
+            self.linear_first = nn.Linear(
+                d_token,
+                d_hidden * (2 if _is_glu_activation(activation) else 1),
+                bias_first,
+            )
+            self.activation = _make_nn_module(activation)
+            self.dropout = nn.Dropout(dropout)
+            self.linear_second = nn.Linear(d_hidden, d_token, bias_second)
+
+        def forward(self, x: Tensor) -> Tensor:
+            x = self.linear_first(x)
+            x = self.activation(x)
+            x = self.dropout(x)
+            x = self.linear_second(x)
+            return x
+
+    class Head(nn.Module):
+        """The final module of the `Transformer` that performs BERT-like inference."""
+
+        def __init__(
+            self,
+            *,
+            d_in: int,
+            bias: bool,
+            activation: ModuleType,
+            normalization: ModuleType,
+            d_out: int,
+        ):
+            super().__init__()
+            self.normalization = _make_nn_module(normalization, d_in)
+            self.activation = _make_nn_module(activation)
+            self.linear = nn.Linear(d_in, d_out, bias)
+
+        def forward(self, x: Tensor) -> Tensor:
+            x = x[:, -1]
+            x = self.normalization(x)
+            x = self.activation(x)
+            x = self.linear(x)
+            return x
+
+    def __init__(
+        self,
+        *,
+        d_token: int,
+        n_blocks: int,
+        attention_n_heads: int,
+        attention_dropout: float,
+        attention_initialization: str,
+        attention_normalization: str,
+        ffn_d_hidden: int,
+        ffn_dropout: float,
+        ffn_activation: str,
+        ffn_normalization: str,
+        residual_dropout: float,
+        prenormalization: bool,
+        first_prenormalization: bool,
+        last_layer_query_idx: Union[None, List[int], slice],
+        n_tokens: Optional[int],
+        kv_compression_ratio: Optional[float],
+        kv_compression_sharing: Optional[str],
+        head_activation: ModuleType,
+        head_normalization: ModuleType,
+        d_out: int,
+        projection: Optional[bool] = False,
+    ) -> None:
+        super().__init__()
+        if isinstance(last_layer_query_idx, int):
+            raise ValueError(
+                'last_layer_query_idx must be None, list[int] or slice. '
+                f'Do you mean last_layer_query_idx=[{last_layer_query_idx}] ?'
+            )
+        if not prenormalization:
+            assert (
+                not first_prenormalization
+            ), 'If `prenormalization` is False, then `first_prenormalization` must be False'
+        assert _all_or_none([n_tokens, kv_compression_ratio, kv_compression_sharing]), (
+            'If any of the following arguments is (not) None, then all of them must (not) be None: '
+            'n_tokens, kv_compression_ratio, kv_compression_sharing'
+        )
+        assert kv_compression_sharing in [None, 'headwise', 'key-value', 'layerwise']
+        if not prenormalization:
+            if self.WARNINGS['prenormalization']:
+                warnings.warn(
+                    'prenormalization is set to False. Are you sure about this? '
+                    'The training can become less stable. '
+                    'You can turn off this warning by tweaking the '
+                    'rtdl.Transformer.WARNINGS dictionary.',
+                    UserWarning,
+                )
+            assert (
+                not first_prenormalization
+            ), 'If prenormalization is False, then first_prenormalization is ignored and must be set to False'
+        if (
+            prenormalization
+            and first_prenormalization
+            and self.WARNINGS['first_prenormalization']
+        ):
+            warnings.warn(
+                'first_prenormalization is set to True. Are you sure about this? '
+                'For example, the vanilla FTTransformer with '
+                'first_prenormalization=True performs SIGNIFICANTLY worse. '
+                'You can turn off this warning by tweaking the '
+                'rtdl.Transformer.WARNINGS dictionary.',
+                UserWarning,
+            )
+            time.sleep(3)
