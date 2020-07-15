@@ -449,3 +449,124 @@ class FT_Transformer(nn.Module):
                 UserWarning,
             )
             time.sleep(3)
+
+        def make_kv_compression():
+            assert (
+                n_tokens and kv_compression_ratio
+            ), _INTERNAL_ERROR_MESSAGE  # for mypy
+            # https://github.com/pytorch/fairseq/blob/1bba712622b8ae4efb3eb793a8a40da386fe11d0/examples/linformer/linformer_src/modules/multihead_linear_attention.py#L83
+            return nn.Linear(n_tokens, int(n_tokens * kv_compression_ratio), bias=False)
+
+        self.shared_kv_compression = (
+            make_kv_compression()
+            if kv_compression_ratio and kv_compression_sharing == 'layerwise'
+            else None
+        )
+
+        self.prenormalization = prenormalization
+        self.last_layer_query_idx = last_layer_query_idx
+
+        self.blocks = nn.ModuleList([])
+        for layer_idx in range(n_blocks):
+            layer = nn.ModuleDict(
+                {
+                    'attention': MultiheadAttention(
+                        d_token=d_token,
+                        n_heads=attention_n_heads,
+                        dropout=attention_dropout,
+                        bias=True,
+                        initialization=attention_initialization,
+                    ),
+                    'ffn': FT_Transformer.FFN(
+                        d_token=d_token,
+                        d_hidden=ffn_d_hidden,
+                        bias_first=True,
+                        bias_second=True,
+                        dropout=ffn_dropout,
+                        activation=ffn_activation,
+                    ),
+                    'attention_residual_dropout': nn.Dropout(residual_dropout),
+                    'ffn_residual_dropout': nn.Dropout(residual_dropout),
+                    'output': nn.Identity(),  # for hooks-based introspection
+                }
+            )
+            if layer_idx or not prenormalization or first_prenormalization:
+                layer['attention_normalization'] = _make_nn_module(
+                    attention_normalization, d_token
+                )
+            layer['ffn_normalization'] = _make_nn_module(ffn_normalization, d_token)
+            if kv_compression_ratio and self.shared_kv_compression is None:
+                layer['key_compression'] = make_kv_compression()
+                if kv_compression_sharing == 'headwise':
+                    layer['value_compression'] = make_kv_compression()
+                else:
+                    assert (
+                        kv_compression_sharing == 'key-value'
+                    ), _INTERNAL_ERROR_MESSAGE
+            self.blocks.append(layer)
+
+         
+        self.head = FT_Transformer.Head(
+            d_in=d_token,
+            d_out=d_out,
+            bias=True,
+            activation=head_activation,  # type: ignore
+            normalization=head_normalization if prenormalization else 'Identity',
+        ) if projection else nn.Identity()
+
+    def _get_kv_compressions(self, layer):
+        return (
+            (self.shared_kv_compression, self.shared_kv_compression)
+            if self.shared_kv_compression is not None
+            else (layer['key_compression'], layer['value_compression'])
+            if 'key_compression' in layer and 'value_compression' in layer
+            else (layer['key_compression'], layer['key_compression'])
+            if 'key_compression' in layer
+            else (None, None)
+        )
+
+    def _start_residual(self, layer, stage, x):
+        assert stage in ['attention', 'ffn'], _INTERNAL_ERROR_MESSAGE
+        x_residual = x
+        if self.prenormalization:
+            norm_key = f'{stage}_normalization'
+            if norm_key in layer:
+                x_residual = layer[norm_key](x_residual)
+        return x_residual
+
+    def _end_residual(self, layer, stage, x, x_residual):
+        assert stage in ['attention', 'ffn'], _INTERNAL_ERROR_MESSAGE
+        x_residual = layer[f'{stage}_residual_dropout'](x_residual)
+        x = x + x_residual
+        if not self.prenormalization:
+            x = layer[f'{stage}_normalization'](x)
+        return x
+
+    def forward(self, x: Tensor) -> Tensor:
+        assert (
+            x.ndim == 3
+        ), 'The input must have 3 dimensions: (n_objects, n_tokens, d_token)'
+        for layer_idx, layer in enumerate(self.blocks):
+            layer = cast(nn.ModuleDict, layer)
+
+            query_idx = (
+                self.last_layer_query_idx if layer_idx + 1 == len(self.blocks) else None
+            )
+            x_residual = self._start_residual(layer, 'attention', x)
+            x_residual, _ = layer['attention'](
+                x_residual if query_idx is None else x_residual[:, query_idx],
+                x_residual,
+                *self._get_kv_compressions(layer),
+            )
+            if query_idx is not None:
+                x = x[:, query_idx]
+            x = self._end_residual(layer, 'attention', x, x_residual)
+
+            x_residual = self._start_residual(layer, 'ffn', x)
+            x_residual = layer['ffn'](x_residual)
+            x = self._end_residual(layer, 'ffn', x, x_residual)
+            x = layer['output'](x)
+
+        x =  self.head(x)
+        
+        return x
