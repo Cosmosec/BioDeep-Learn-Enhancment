@@ -177,3 +177,25 @@ class MMEvalGraphDataset(MMGraphDataset):
 
     def __getitem__(self, index):
         
+        edge_index = np.array(self.edge_index[index][:,0:2],dtype=np.int32)
+        edge_index = torch.tensor(edge_index, dtype=torch.long)
+        
+        edge_attr = np.array(self.edge_attr[index][:,0:1],dtype=np.int32)
+        edge_attr = torch.tensor(edge_attr, dtype=torch.float)
+        
+        feature = torch.tensor(self.feature[index], dtype=torch.float)
+        label = torch.tensor([self.label[index]],dtype=torch.long)
+        
+        # pid = torch.tensor([self.pid[index]],dtype=torch.long)
+        pid = torch.tensor([1],dtype=torch.long) ### temporial
+        
+        # put edge, feature, label together to form graph information in "Data" format
+        graph = Data(x = feature, edge_index=edge_index.t().contiguous(), edge_attr=edge_attr, y=label, pid=pid)
+        
+        img_path = self.imgs[index]
+        label = self.labels[index]
+        
+        _img = self.loader(img_path)
+        img = self.img_transform(_img)
+        return graph, img, label, img_path
+    
