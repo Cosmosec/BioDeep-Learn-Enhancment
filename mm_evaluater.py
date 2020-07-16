@@ -114,3 +114,94 @@ class MMEvaluater:
         
         model = create_model(
             config = config.models,
+            num_classes = config.data.num_classes,
+            in_features = testset.num_features
+        )
+        
+        model.load_state_dict(
+            torch.load(os.path.join(input_path,'weights',choice,'best_model.pth'))
+        )
+        
+        self.model = model.to(self.device)
+        print('Initalization complete.')
+        
+        
+    def evaluate(self):
+        csv_path = os.path.join(self.output_path,'prediction_{}.csv'.format(self.choice))
+        txt_path = os.path.join(self.output_path,'patient_result_{}.txt'.format(self.choice))
+        f = open(csv_path,'w',encoding='utf-8')
+        
+        csv_writer = csv.writer(f)
+        csv_writer.writerow(
+            ['name','label','logits_0','logits_1','prob_0','prob_1']
+        )
+        
+
+        with torch.no_grad():
+            self.model.eval()
+            
+            for data in tqdm(self.test_loader):
+                
+                graph, img, label, img_path = data
+                
+                graph = graph.to(self.device)
+                img = img.to(self.device)
+                label = label.to(self.device)
+                
+                data = { 
+                    GRAPH: graph,
+                    IMAGE: img,
+                    LABEL: label,
+                }
+            
+                out  = self.model(data)
+                
+                out = out.cpu().numpy()
+                label = label.cpu().tolist()
+                img_name = [name.split('/')[-1] for name in img_path]
+                
+                for idx in range(len(img_name)):
+                    logits = np.array(out[idx,:].tolist())
+                    probs = np.exp(logits) / np.sum(np.exp(logits))
+            
+                    result = [
+                        img_name[idx],
+                        label[idx],]
+                    
+                    result = result + list(logits) + list(probs)
+                    
+                    csv_writer.writerow(result)
+                
+        compute_result(csv_path,txt_path)
+    
+
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument('--path', type=str)
+    parser.add_argument('--gpu_id', type=int, default=0)
+    args = parser.parse_args()  
+    
+    for path in tqdm(os.listdir(args.path)):
+        input_path = os.path.join(args.path,path)
+        
+        break_flag = False
+        for name in os.listdir(input_path):
+            if 'patient_result' in name:
+                break_flag = True 
+        
+        print(input_path)
+        
+        if break_flag: 
+            print('skip')
+            continue  
+         
+        
+        mmevalute = MMEvaluater(
+            input_path=input_path,
+            gpu_id=args.gpu_id,
+        )
+        mmevalute.evaluate()
+    
