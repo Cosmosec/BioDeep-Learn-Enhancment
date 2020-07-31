@@ -20,4 +20,11 @@ from const import(
 from models import gnn_model_dict,fusion_dict
 import timm 
 import functools
-from ft_tr
+from ft_transformer import FT_Transformer
+
+class TIMM(nn.Module):
+    def __init__(
+            self,
+            prefix: str,
+            model_name: str,
+      
