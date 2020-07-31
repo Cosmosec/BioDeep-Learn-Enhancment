@@ -33,4 +33,8 @@ class TIMM(nn.Module):
         super(TIMM, self).__init__()
         self.prefix = prefix 
         
-        # se
+        # self.data_key = f"{prefix}_{IMAGE}"
+        # self.label_key = f"{prefix}_{LABEL}"
+        
+        self.data_key = f"{IMAGE}"
+        self.label_key = f"
