@@ -27,4 +27,10 @@ class TIMM(nn.Module):
             self,
             prefix: str,
             model_name: str,
-      
+            num_classes: Optional[int] = 0,
+            pretrained: Optional[bool] = True,
+    ):
+        super(TIMM, self).__init__()
+        self.prefix = prefix 
+        
+        # se
