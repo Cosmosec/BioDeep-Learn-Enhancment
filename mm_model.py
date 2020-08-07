@@ -37,4 +37,10 @@ class TIMM(nn.Module):
         # self.label_key = f"{prefix}_{LABEL}"
         
         self.data_key = f"{IMAGE}"
-        self.label_key = f"
+        self.label_key = f"{LABEL}"
+        
+        self.num_classes = num_classes
+        
+        self.model = timm.create_model(
+            model_name, 
+            pretr
