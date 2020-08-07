@@ -43,4 +43,10 @@ class TIMM(nn.Module):
         
         self.model = timm.create_model(
             model_name, 
-            pretr
+            pretrained=pretrained, 
+            num_classes=0
+        )
+        
+        self.out_features = self.model.num_features
+        
+        self.head = nn.Linear(self.out
