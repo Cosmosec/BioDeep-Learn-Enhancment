@@ -56,4 +56,21 @@ class TIMM(nn.Module):
      
     def forward(
         self, 
-  
+        batch
+    ):
+        data = batch[self.data_key]
+        
+        features = self.model(data)
+        logits = self.head(features)
+            
+        return {
+            self.prefix: {
+                LOGITS: logits,
+                FEATURES: features,
+            }
+        }     
+        
+
+class GNN(nn.Module):
+    def __init__(
+            sel
