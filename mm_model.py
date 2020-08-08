@@ -73,4 +73,10 @@ class TIMM(nn.Module):
 
 class GNN(nn.Module):
     def __init__(
-            sel
+            self,
+            prefix: str,
+            model_name: str,
+            num_classes: int,
+            in_features: int, 
+            hidden_features: Optional[int] = 256, 
+            out_feat
