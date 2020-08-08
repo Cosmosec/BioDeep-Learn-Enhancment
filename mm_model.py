@@ -49,4 +49,11 @@ class TIMM(nn.Module):
         
         self.out_features = self.model.num_features
         
-        self.head = nn.Linear(self.out
+        self.head = nn.Linear(self.out_features, num_classes) if num_classes > 0 else nn.Identity()
+        self.head.apply(init_weights)
+        
+        
+     
+    def forward(
+        self, 
+  
