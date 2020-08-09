@@ -79,4 +79,9 @@ class GNN(nn.Module):
             num_classes: int,
             in_features: int, 
             hidden_features: Optional[int] = 256, 
-            out_feat
+            out_features: Optional[int] = 256,
+            pooling: Optional[float] = 0.5,
+            activation: Optional[str] = "gelu",
+    ):
+        
+        super(G
