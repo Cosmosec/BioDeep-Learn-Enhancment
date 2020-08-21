@@ -84,4 +84,10 @@ class GNN(nn.Module):
             activation: Optional[str] = "gelu",
     ):
         
-        super(G
+        super(GNN, self).__init__()
+        
+        self.prefix = prefix 
+        self.num_classes = num_classes
+        
+        # self.data_key = f"{prefix}_{GRAPH}"
+ 
