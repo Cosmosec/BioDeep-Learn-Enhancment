@@ -95,4 +95,8 @@ class GNN(nn.Module):
         self.data_key = f"{GRAPH}"
         self.label_key = f"{LABEL}"
         
-        self.model 
+        self.model = gnn_model_dict[model_name](
+            in_features = in_features,
+            hidden_features = hidden_features,
+            out_features = out_features,
+            pooling = pooli
