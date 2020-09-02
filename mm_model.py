@@ -99,4 +99,8 @@ class GNN(nn.Module):
             in_features = in_features,
             hidden_features = hidden_features,
             out_features = out_features,
-            pooling = pooli
+            pooling = pooling,
+            activation = activation,
+        )
+        
+        self.head = nn.Linear(out_features, num_classes) if num_classes > 0 else nn.Identity()
