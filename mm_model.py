@@ -90,4 +90,9 @@ class GNN(nn.Module):
         self.num_classes = num_classes
         
         # self.data_key = f"{prefix}_{GRAPH}"
- 
+        # self.label_key = f"{prefix}_{LABEL}"
+        
+        self.data_key = f"{GRAPH}"
+        self.label_key = f"{LABEL}"
+        
+        self.model 
