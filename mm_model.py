@@ -104,3 +104,11 @@ class GNN(nn.Module):
         )
         
         self.head = nn.Linear(out_features, num_classes) if num_classes > 0 else nn.Identity()
+        self.out_features = out_features
+        
+        
+    def forward(self, batch):
+        data = batch[self.data_key]
+        
+        features = self.model(data)
+        logits = 
