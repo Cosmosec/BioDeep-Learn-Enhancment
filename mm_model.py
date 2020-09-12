@@ -122,4 +122,11 @@ class GNN(nn.Module):
 
 
 
-class Fus
+class FusionMLP(nn.Module):
+    def __init__(
+        self,
+        prefix: str,
+        models: list,
+        num_classes: int,
+        hidden_features: List[int],
+       
