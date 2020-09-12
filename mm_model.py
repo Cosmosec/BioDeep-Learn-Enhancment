@@ -129,4 +129,7 @@ class FusionMLP(nn.Module):
         models: list,
         num_classes: int,
         hidden_features: List[int],
-       
+        adapt_in_features: Optional[str] = None,
+        activation: Optional[str] = "gelu",
+        dropout_prob: Optional[float] = 0.5,
+        normalization: Optional[str] = "la
