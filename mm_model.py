@@ -111,4 +111,15 @@ class GNN(nn.Module):
         data = batch[self.data_key]
         
         features = self.model(data)
-        logits = 
+        logits = self.head(features)
+            
+        return {
+            self.prefix: {
+                LOGITS: logits,
+                FEATURES: features,
+            }
+        }
+
+
+
+class Fus
