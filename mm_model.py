@@ -140,4 +140,7 @@ class FusionMLP(nn.Module):
         self.model = nn.ModuleList(models)   
         
         # TODO: Add out_features to each model
-     
+        raw_in_features = [per_model.out_features for per_model in models]
+        
+        if adapt_in_features is not None:
+            if adapt_in_features ==
