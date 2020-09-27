@@ -132,4 +132,12 @@ class FusionMLP(nn.Module):
         adapt_in_features: Optional[str] = None,
         activation: Optional[str] = "gelu",
         dropout_prob: Optional[float] = 0.5,
-        normalization: Optional[str] = "la
+        normalization: Optional[str] = "layer_norm",
+    ):
+    
+        super().__init__()
+        self.prefix = prefix
+        self.model = nn.ModuleList(models)   
+        
+        # TODO: Add out_features to each model
+     
