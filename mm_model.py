@@ -151,4 +151,9 @@ class FusionMLP(nn.Module):
                 raise ValueError(f"unknown adapt_in_features: {adapt_in_features}")
 
             self.adapter = nn.ModuleList(
-                [nn.Linear(in_feat, base_in_f
+                [nn.Linear(in_feat, base_in_feat) for in_feat in raw_in_features]
+            )
+            
+            in_features = base_in_feat * len(raw_in_features)
+        else:
+            self.adapte
