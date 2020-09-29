@@ -143,4 +143,9 @@ class FusionMLP(nn.Module):
         raw_in_features = [per_model.out_features for per_model in models]
         
         if adapt_in_features is not None:
-            if adapt_in_features ==
+            if adapt_in_features == "min":
+                base_in_feat = min(raw_in_features)
+            elif adapt_in_features == "max":
+                base_in_feat = max(raw_in_features)
+            else:
+            
