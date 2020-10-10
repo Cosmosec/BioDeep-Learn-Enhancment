@@ -161,4 +161,9 @@ class FusionMLP(nn.Module):
             )
             in_features = sum(raw_in_features)
 
-     
+        assert len(self.adapter) == len(self.model)
+        
+        
+        fusion_mlp = []
+        for per_hidden_features in hidden_features:
+            fusion_mlp.
