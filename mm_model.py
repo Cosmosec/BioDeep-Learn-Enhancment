@@ -156,4 +156,9 @@ class FusionMLP(nn.Module):
             
             in_features = base_in_feat * len(raw_in_features)
         else:
-            self.adapte
+            self.adapter = nn.ModuleList(
+                [nn.Identity() for _ in range(len(raw_in_features))]
+            )
+            in_features = sum(raw_in_features)
+
+     
