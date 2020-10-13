@@ -166,4 +166,8 @@ class FusionMLP(nn.Module):
         
         fusion_mlp = []
         for per_hidden_features in hidden_features:
-            fusion_mlp.
+            fusion_mlp.append(
+                MLP(
+                    in_features=in_features,
+                    hidden_features=per_hidden_features,
+                    out_f
