@@ -179,4 +179,7 @@ class FusionMLP(nn.Module):
             )
             in_features = per_hidden_features
             
-        self.fusion_mlp = n
+        self.fusion_mlp = nn.Sequential(*fusion_mlp)
+        # in_features has become the latest hidden size
+        self.head = nn.Linear(in_features, num_classes)
+        # init we
