@@ -170,4 +170,8 @@ class FusionMLP(nn.Module):
                 MLP(
                     in_features=in_features,
                     hidden_features=per_hidden_features,
-                    out_f
+                    out_features=per_hidden_features,
+                    num_layers=1,
+                    activation=activation,
+                    dropout_prob=dropout_prob,
+           
