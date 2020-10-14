@@ -174,4 +174,9 @@ class FusionMLP(nn.Module):
                     num_layers=1,
                     activation=activation,
                     dropout_prob=dropout_prob,
-           
+                    normalization=normalization,
+                )
+            )
+            in_features = per_hidden_features
+            
+        self.fusion_mlp = n
