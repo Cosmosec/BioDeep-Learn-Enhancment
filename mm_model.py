@@ -189,4 +189,11 @@ class FusionMLP(nn.Module):
         self.head.apply(init_weights)
         
     def forward(
-    
+        self,
+        batch: dict,
+    ):
+        multimodal_features = []
+
+        for per_model, per_adapter in zip(self.model, self.adapter):
+            per_output = per_model(batch)
+  
