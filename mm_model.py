@@ -182,4 +182,11 @@ class FusionMLP(nn.Module):
         self.fusion_mlp = nn.Sequential(*fusion_mlp)
         # in_features has become the latest hidden size
         self.head = nn.Linear(in_features, num_classes)
-        # init we
+        # init weights
+        
+        self.adapter.apply(init_weights)
+        self.fusion_mlp.apply(init_weights)
+        self.head.apply(init_weights)
+        
+    def forward(
+    
