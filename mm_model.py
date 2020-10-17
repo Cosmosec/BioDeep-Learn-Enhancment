@@ -196,4 +196,7 @@ class FusionMLP(nn.Module):
 
         for per_model, per_adapter in zip(self.model, self.adapter):
             per_output = per_model(batch)
-  
+            multimodal_features.append(per_adapter(per_output[per_model.prefix][FEATURES]))
+            
+
+        features = self.fusion_mlp(torch.cat(multimodal_features, di
