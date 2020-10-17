@@ -199,4 +199,9 @@ class FusionMLP(nn.Module):
             multimodal_features.append(per_adapter(per_output[per_model.prefix][FEATURES]))
             
 
-        features = self.fusion_mlp(torch.cat(multimodal_features, di
+        features = self.fusion_mlp(torch.cat(multimodal_features, dim=1))
+        logits = self.head(features)
+        # fusion_output = {
+        #     self.prefix: {
+        #         LOGITS: logits,
+        #         FEATURES:
