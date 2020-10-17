@@ -204,4 +204,16 @@ class FusionMLP(nn.Module):
         # fusion_output = {
         #     self.prefix: {
         #         LOGITS: logits,
-        #         FEATURES:
+        #         FEATURES: features,
+        #     }
+        # }
+        
+        # return fusion_output
+        return logits
+
+  
+
+class FusionTransformer(nn.Module):
+
+    def __init__(
+      
