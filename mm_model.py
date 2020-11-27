@@ -216,4 +216,9 @@ class FusionMLP(nn.Module):
 class FusionTransformer(nn.Module):
 
     def __init__(
-      
+            self,
+            prefix: str,
+            models: list,
+            hidden_features: int,
+            num_classes: int,
+            adapt_in_features:
