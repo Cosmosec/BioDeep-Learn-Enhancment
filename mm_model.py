@@ -234,4 +234,8 @@ class FusionTransformer(nn.Module):
             elif adapt_in_features == "max":
                 base_in_feat = max(raw_in_features)
             else:
-                raise ValueError(f"unknown adapt_in_features
+                raise ValueError(f"unknown adapt_in_features: {adapt_in_features}")
+
+            self.adapter = nn.ModuleList(
+                [nn.Linear(in_feat, base_in_feat) for in_feat in raw_in_features]
+          
