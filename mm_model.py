@@ -221,4 +221,10 @@ class FusionTransformer(nn.Module):
             models: list,
             hidden_features: int,
             num_classes: int,
-            adapt_in_features:
+            adapt_in_features: Optional[str] = None,
+    ):
+        super().__init__()
+        
+        self.model = nn.ModuleList(models)
+
+        raw_in_features = [per_model.out_features for per_model in
