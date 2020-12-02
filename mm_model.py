@@ -231,4 +231,7 @@ class FusionTransformer(nn.Module):
         if adapt_in_features is not None:
             if adapt_in_features == "min":
                 base_in_feat = min(raw_in_features)
-            el
+            elif adapt_in_features == "max":
+                base_in_feat = max(raw_in_features)
+            else:
+                raise ValueError(f"unknown adapt_in_features
