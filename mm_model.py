@@ -238,4 +238,10 @@ class FusionTransformer(nn.Module):
 
             self.adapter = nn.ModuleList(
                 [nn.Linear(in_feat, base_in_feat) for in_feat in raw_in_features]
+            )
+
+            in_features = base_in_feat
+        else:
+            self.adapter = nn.ModuleList(
+                [nn.Identity() for _ in range(len(raw_in_features))]
           
