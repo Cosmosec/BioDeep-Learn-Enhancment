@@ -244,4 +244,10 @@ class FusionTransformer(nn.Module):
         else:
             self.adapter = nn.ModuleList(
                 [nn.Identity() for _ in range(len(raw_in_features))]
-          
+            )
+            in_features = sum(raw_in_features)
+
+        assert len(self.adapter) == len(self.model)
+
+        self.fusion_transformer = FT_Transformer(
+            d_token=i
