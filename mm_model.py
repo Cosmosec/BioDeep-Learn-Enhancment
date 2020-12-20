@@ -250,4 +250,9 @@ class FusionTransformer(nn.Module):
         assert len(self.adapter) == len(self.model)
 
         self.fusion_transformer = FT_Transformer(
-            d_token=i
+            d_token=in_features,
+            n_blocks=1,
+            attention_n_heads=4,
+            attention_dropout=0.1,
+            attention_initialization='kaiming',
+      
