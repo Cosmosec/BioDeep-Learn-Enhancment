@@ -255,4 +255,8 @@ class FusionTransformer(nn.Module):
             attention_n_heads=4,
             attention_dropout=0.1,
             attention_initialization='kaiming',
-      
+            attention_normalization='LayerNorm',
+            ffn_d_hidden=192,
+            ffn_dropout=0.1,
+            ffn_activation='ReGLU',
+            ffn_normaliza
