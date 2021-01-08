@@ -259,4 +259,8 @@ class FusionTransformer(nn.Module):
             ffn_d_hidden=192,
             ffn_dropout=0.1,
             ffn_activation='ReGLU',
-            ffn_normaliza
+            ffn_normalization='LayerNorm',
+            residual_dropout=0.0,
+            prenormalization=True,
+            first_prenormalization=False,
+            last_layer_query_idx=None,
