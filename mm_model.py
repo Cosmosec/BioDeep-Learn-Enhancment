@@ -268,4 +268,11 @@ class FusionTransformer(nn.Module):
             kv_compression_ratio=None,
             kv_compression_sharing=None,
             head_activation='ReLU',
-            head_normalization='La
+            head_normalization='LayerNorm',
+            d_out=hidden_features,
+        )
+
+        self.head = FT_Transformer.Head(
+            d_in=in_features,
+            d_out=num_classes,
+         
