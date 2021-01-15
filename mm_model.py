@@ -282,4 +282,14 @@ class FusionTransformer(nn.Module):
         
         # init weights
         self.adapter.apply(init_weights)
-        se
+        self.head.apply(init_weights)
+
+        self.prefix = prefix
+        
+
+    def forward(
+            self,
+            batch: dict,
+    ):
+        multimodal_features = []
+   
