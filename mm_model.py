@@ -275,4 +275,11 @@ class FusionTransformer(nn.Module):
         self.head = FT_Transformer.Head(
             d_in=in_features,
             d_out=num_classes,
-         
+            bias=True,
+            activation='ReLU', 
+            normalization='LayerNorm',
+        )
+        
+        # init weights
+        self.adapter.apply(init_weights)
+        se
