@@ -264,3 +264,8 @@ class FusionTransformer(nn.Module):
             prenormalization=True,
             first_prenormalization=False,
             last_layer_query_idx=None,
+            n_tokens=None,
+            kv_compression_ratio=None,
+            kv_compression_sharing=None,
+            head_activation='ReLU',
+            head_normalization='La
