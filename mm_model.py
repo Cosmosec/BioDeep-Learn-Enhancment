@@ -297,4 +297,9 @@ class FusionTransformer(nn.Module):
             multimodal_feature = per_adapter(per_output[per_model.prefix][FEATURES])
             if multimodal_feature.ndim == 2:
                 multimodal_feature = torch.unsqueeze(multimodal_feature,dim=1)
-            multimodal_features
+            multimodal_features.append(multimodal_feature)
+
+
+        multimodal_features = torch.cat(multimodal_features, dim=1)
+        features = self.fusion_transformer(multimodal_features)
+       
