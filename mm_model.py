@@ -302,4 +302,15 @@ class FusionTransformer(nn.Module):
 
         multimodal_features = torch.cat(multimodal_features, dim=1)
         features = self.fusion_transformer(multimodal_features)
-       
+        logits = self.head(features)
+        
+        return logits
+
+
+
+class GNNTransformer(nn.Module):
+    def __init__(
+        self,
+        prefix: str,
+        num_classes: int,  
+  
