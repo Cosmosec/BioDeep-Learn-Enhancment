@@ -313,4 +313,8 @@ class GNNTransformer(nn.Module):
         self,
         prefix: str,
         num_classes: int,  
-  
+        gnn_in_features: int, 
+        model_name: Optional[str] = 'gcn',
+        attn_heads: Optional[int] = 8, 
+        dim_head: Optional[int] = 64, 
+        
