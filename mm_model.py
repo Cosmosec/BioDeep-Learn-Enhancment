@@ -317,4 +317,7 @@ class GNNTransformer(nn.Module):
         model_name: Optional[str] = 'gcn',
         attn_heads: Optional[int] = 8, 
         dim_head: Optional[int] = 64, 
-        
+        emb_dropout: Optional[float] = 0.,
+        hidden_features: Optional[int] = 256, 
+        out_features: Optional[int] = 256,
+        gnn_pooling: O
