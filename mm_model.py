@@ -320,4 +320,8 @@ class GNNTransformer(nn.Module):
         emb_dropout: Optional[float] = 0.,
         hidden_features: Optional[int] = 256, 
         out_features: Optional[int] = 256,
-        gnn_pooling: O
+        gnn_pooling: Optional[float] = 0.5,
+        gnn_activation: Optional[str] = "gelu",
+        vit_pool: Optional[str] ='cls', 
+        vit_dropout: Optional[float] = 0., 
+        input_image_chan
