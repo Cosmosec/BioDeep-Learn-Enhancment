@@ -324,4 +324,8 @@ class GNNTransformer(nn.Module):
         gnn_activation: Optional[str] = "gelu",
         vit_pool: Optional[str] ='cls', 
         vit_dropout: Optional[float] = 0., 
-        input_image_chan
+        input_image_channels: Optional[int] = 3, 
+        patch_size: Optional[Tuple[int]] = (16,16), 
+        image_size: Optional[Tuple[int]] = (224,224),      
+    ):
+        su
