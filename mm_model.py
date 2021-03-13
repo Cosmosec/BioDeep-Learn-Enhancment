@@ -328,4 +328,8 @@ class GNNTransformer(nn.Module):
         patch_size: Optional[Tuple[int]] = (16,16), 
         image_size: Optional[Tuple[int]] = (224,224),      
     ):
-        su
+        super().__init__()
+        self.prefix = prefix 
+        self.out_features = out_features
+        
+        self.head = nn.Linear(out_features, num_classes) if num_
