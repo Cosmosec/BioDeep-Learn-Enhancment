@@ -332,4 +332,8 @@ class GNNTransformer(nn.Module):
         self.prefix = prefix 
         self.out_features = out_features
         
-        self.head = nn.Linear(out_features, num_classes) if num_
+        self.head = nn.Linear(out_features, num_classes) if num_classes > 0 else nn.Identity()
+        
+        self.model = fusion_dict[model_name](
+            gnn_in_features = gnn_in_features, 
+            a
