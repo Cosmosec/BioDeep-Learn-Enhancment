@@ -336,4 +336,8 @@ class GNNTransformer(nn.Module):
         
         self.model = fusion_dict[model_name](
             gnn_in_features = gnn_in_features, 
-            a
+            attn_heads = attn_heads, 
+            dim_head = dim_head, 
+            emb_dropout = emb_dropout,
+            hidden_features = hidden_features, 
+            o
