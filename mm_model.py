@@ -340,4 +340,9 @@ class GNNTransformer(nn.Module):
             dim_head = dim_head, 
             emb_dropout = emb_dropout,
             hidden_features = hidden_features, 
-            o
+            out_features = out_features,
+            gnn_pooling = gnn_pooling,
+            gnn_activation = gnn_activation,
+            vit_pool = vit_pool, 
+            vit_dropout = vit_dropout, 
+     
