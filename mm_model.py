@@ -370,4 +370,10 @@ class GNNTransformer(nn.Module):
 class GNNResNet(nn.Module):
     def __init__(
         self,
-   
+        prefix: str,
+        num_classes: int,  
+        gnn_in_features: int, 
+        out_features: Optional[int] = 256,    
+    ):
+        super().__init__()
+        self.prefix = pr
