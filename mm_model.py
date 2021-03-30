@@ -360,3 +360,14 @@ class GNNTransformer(nn.Module):
         logits = self.head(features)
         
         return {
+            self.prefix: {
+                LOGITS: logits,
+                FEATURES: features,
+            }
+        }  
+
+
+class GNNResNet(nn.Module):
+    def __init__(
+        self,
+   
