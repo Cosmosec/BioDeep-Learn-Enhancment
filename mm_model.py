@@ -345,4 +345,9 @@ class GNNTransformer(nn.Module):
             gnn_activation = gnn_activation,
             vit_pool = vit_pool, 
             vit_dropout = vit_dropout, 
-     
+            input_image_channels = input_image_channels, 
+            patch_size = patch_size, 
+            image_size = image_size, 
+        )
+    
+    def forward(self,batch):
