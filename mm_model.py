@@ -376,4 +376,8 @@ class GNNResNet(nn.Module):
         out_features: Optional[int] = 256,    
     ):
         super().__init__()
-        self.prefix = pr
+        self.prefix = prefix 
+        self.out_features = out_features
+        
+        self.head = nn.Linear(out_features, num_classes) if num_classes > 0 else nn.Identity()
+   
