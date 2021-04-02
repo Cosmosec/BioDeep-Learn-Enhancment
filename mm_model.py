@@ -388,4 +388,11 @@ class GNNResNet(nn.Module):
     def forward(self,batch):
 
         features = self.model(
-   
+            img = batch[IMAGE], 
+            data = batch[GRAPH]
+        ) 
+        
+        logits = self.head(features)
+        
+        return {
+            s
