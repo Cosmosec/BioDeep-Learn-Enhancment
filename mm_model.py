@@ -380,4 +380,12 @@ class GNNResNet(nn.Module):
         self.out_features = out_features
         
         self.head = nn.Linear(out_features, num_classes) if num_classes > 0 else nn.Identity()
+        
+        self.model = GCNResNet(
+            gnn_in_features=gnn_in_features,
+        )
+    
+    def forward(self,batch):
+
+        features = self.model(
    
