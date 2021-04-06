@@ -395,4 +395,11 @@ class GNNResNet(nn.Module):
         logits = self.head(features)
         
         return {
-            s
+            self.prefix: {
+                LOGITS: logits,
+                FEATURES: features,
+            }
+        }  
+        
+def create_model(config, num_classes, in_features):
+  
