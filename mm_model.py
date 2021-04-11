@@ -410,4 +410,7 @@ def create_model(config, num_classes, in_features):
                     prefix = model_name,
                     model_name = model_config.model_name,
                     in_features = in_features,
-                 
+                    num_classes = num_classes,
+                    hidden_features = model_config.hidden_features, 
+                    out_features  = model_config.out_features,
+  
