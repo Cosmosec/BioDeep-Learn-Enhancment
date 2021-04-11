@@ -402,4 +402,8 @@ class GNNResNet(nn.Module):
         }  
         
 def create_model(config, num_classes, in_features):
-  
+    models = []
+    for model_name in config.names:
+        model_config = getattr(config, model_name)
+        if model_name.lower().startswith(GNN_MODEL):
+         
