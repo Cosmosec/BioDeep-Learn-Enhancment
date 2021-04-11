@@ -406,4 +406,8 @@ def create_model(config, num_classes, in_features):
     for model_name in config.names:
         model_config = getattr(config, model_name)
         if model_name.lower().startswith(GNN_MODEL):
-         
+            model = GNN(
+                    prefix = model_name,
+                    model_name = model_config.model_name,
+                    in_features = in_features,
+                 
