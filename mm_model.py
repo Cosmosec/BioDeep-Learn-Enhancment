@@ -413,4 +413,8 @@ def create_model(config, num_classes, in_features):
                     num_classes = num_classes,
                     hidden_features = model_config.hidden_features, 
                     out_features  = model_config.out_features,
-  
+                    pooling = model_config.pooling,
+                    activation = model_config.activation,
+            )
+            
+        elif model_name.lower().startswith(TIMM_MOD
