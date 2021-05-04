@@ -421,4 +421,9 @@ def create_model(config, num_classes, in_features):
             model = TIMM(
                     prefix = model_name,
                     model_name = model_config.model_name,
-                    num_classes = num_clas
+                    num_classes = num_classes,
+                    pretrained = model_config.pretrained
+            )
+        elif model_name.lower().startswith(GNN_TRANSFORMER):
+            model = GNNTransformer(
+                    
