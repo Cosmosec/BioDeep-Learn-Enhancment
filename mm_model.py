@@ -417,4 +417,8 @@ def create_model(config, num_classes, in_features):
                     activation = model_config.activation,
             )
             
-        elif model_name.lower().startswith(TIMM_MOD
+        elif model_name.lower().startswith(TIMM_MODEL):
+            model = TIMM(
+                    prefix = model_name,
+                    model_name = model_config.model_name,
+                    num_classes = num_clas
