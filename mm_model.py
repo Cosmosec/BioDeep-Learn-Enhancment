@@ -426,4 +426,7 @@ def create_model(config, num_classes, in_features):
             )
         elif model_name.lower().startswith(GNN_TRANSFORMER):
             model = GNNTransformer(
-                    
+                    prefix = model_name,
+                    model_name = model_config.model_name,
+                    num_classes = num_classes,  
+                    gnn_in_fea
