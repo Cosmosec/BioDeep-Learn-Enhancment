@@ -429,4 +429,7 @@ def create_model(config, num_classes, in_features):
                     prefix = model_name,
                     model_name = model_config.model_name,
                     num_classes = num_classes,  
-                    gnn_in_fea
+                    gnn_in_features = in_features,
+                    attn_heads = model_config.attn_heads, 
+                    dim_head = model_config.dim_head, 
+                    emb
