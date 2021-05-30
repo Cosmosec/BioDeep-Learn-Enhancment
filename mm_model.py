@@ -442,4 +442,8 @@ def create_model(config, num_classes, in_features):
         elif model_name.lower().startswith(GNN_RESNET):
             model = GNNResNet(
                     prefix = model_name,
-                    num_classes = num_classes,
+                    num_classes = num_classes, 
+                    gnn_in_features = in_features, 
+            )
+        elif model_name.lower().startswith(FUSION_MLP):
+            fusion_model = functools.partial(
