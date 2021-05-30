@@ -435,4 +435,6 @@ def create_model(config, num_classes, in_features):
                     emb_dropout = model_config.emb_dropout,
                     hidden_features = model_config.hidden_features, 
                     out_features = model_config.hidden_features ,
-        
+                    gnn_pooling = model_config.gnn_pooling,
+                    vit_dropout = model_config.vit_dropout, 
+                    gnn_activation = model_config.gnn_activation
