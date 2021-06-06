@@ -450,4 +450,6 @@ def create_model(config, num_classes, in_features):
                     FusionMLP,
                     prefix = model_name,
                     num_classes = num_classes,
-                    hidden_feat
+                    hidden_features = model_config.hidden_features,
+                    adapt_in_features = model_config.adapt_in_features,
+                    activation = model_config.activation,
