@@ -447,3 +447,7 @@ def create_model(config, num_classes, in_features):
             )
         elif model_name.lower().startswith(FUSION_MLP):
             fusion_model = functools.partial(
+                    FusionMLP,
+                    prefix = model_name,
+                    num_classes = num_classes,
+                    hidden_feat
