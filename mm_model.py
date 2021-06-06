@@ -453,3 +453,7 @@ def create_model(config, num_classes, in_features):
                     hidden_features = model_config.hidden_features,
                     adapt_in_features = model_config.adapt_in_features,
                     activation = model_config.activation,
+                    dropout_prob = model_config.dropout_prob,
+                    normalization = model_config.normalization,
+            )
+        elif model_name.lower().s
