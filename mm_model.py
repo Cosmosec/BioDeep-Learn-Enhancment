@@ -456,4 +456,8 @@ def create_model(config, num_classes, in_features):
                     dropout_prob = model_config.dropout_prob,
                     normalization = model_config.normalization,
             )
-        elif model_name.lower().s
+        elif model_name.lower().startswith(FUSION_TRANSFORMER):
+            fusion_model = functools.partial(
+                FusionTransformer,
+                prefix = model_name,
+            
