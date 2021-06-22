@@ -460,4 +460,7 @@ def create_model(config, num_classes, in_features):
             fusion_model = functools.partial(
                 FusionTransformer,
                 prefix = model_name,
-            
+                num_classes = num_classes,
+                hidden_features = model_config.hidden_features,
+                adapt_in_features = model_config.adapt_in_features,
+       
