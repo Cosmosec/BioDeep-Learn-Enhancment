@@ -463,4 +463,10 @@ def create_model(config, num_classes, in_features):
                 num_classes = num_classes,
                 hidden_features = model_config.hidden_features,
                 adapt_in_features = model_config.adapt_in_features,
-       
+            )
+        else:
+            raise ValueError(f"unknown model name: {model_name}")
+        
+        models.append(model)
+        
+    return fusion_model(models=models)
