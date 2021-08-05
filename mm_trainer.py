@@ -158,3 +158,134 @@ class MMTrainer:
                 torch.save(self.model.state_dict(), os.path.join(self.output_path, 'weights' ,'acc' , 'model_epoch{}.pth'.format(epoch)))
                 torch.save(self.model.state_dict(), os.path.join(self.output_path, 'weights' ,'acc' , 'best_model.pth'))
                 
+            if test_auc > best_test_auc:
+                best_test_auc = test_auc
+                best_auc_epoch = epoch
+                torch.save(self.model.state_dict(), os.path.join(self.output_path, 'weights' ,'auc' , 'model_epoch{}.pth'.format(epoch)))
+                torch.save(self.model.state_dict(), os.path.join(self.output_path, 'weights' ,'auc' , 'best_model.pth'))
+                
+                _test_auc_recorder.draw_roc(
+                    path = os.path.join(self.output_path,'figures','epoch_{}_test_roc.png'.format(epoch))
+                )
+            
+            msg = 'Epoch {:03d} ##################   \
+                \n \tTrain loss: {:.5f},   Train acc: {:.3f}%,    Train auc: {:.4f};\
+                \n \tTest loss: {:.5f},   Test acc: {:.3f}%,   Test auc: {:.4f};  \
+                \n \tBest test acc: {:.3f},    Best test auc: {:.4f}\n\n'.format(
+                    epoch, train_loss, train_acc, train_auc,
+                    test_loss, test_acc, test_auc, 
+                    best_test_acc, best_test_auc)  
+                
+            if verbosity:
+                print(msg)
+            self.logging.write(msg)
+            self.logging.flush()   
+            
+            if (epoch - best_epoch) > self.patience:
+                break
+        
+        msg = "Best test acc:{:.3f}% @ epoch {} \n".format(best_test_acc,best_epoch)
+        if verbosity:
+            print(msg)
+        self.logging.write(msg)
+        self.logging.flush() 
+        
+        msg = "Best test auc:{:.4f} @ epoch {} \n".format(best_test_auc,best_auc_epoch)
+        if verbosity:
+            print(msg)
+        self.logging.write(msg)
+        self.logging.flush() 
+        
+        
+        time_end=time.time()    
+        msg= "run time: {:.1f}s, {:.2f}h\n".format(time_end-time_start,(time_end-time_start)/3600)
+        if verbosity:
+            print(msg)
+        self.logging.write(msg)
+        self.logging.flush() 
+
+    
+    def _train_one_epoch(self):  
+        _train_loss_recorder = AverageMeter()
+        _train_acc_recorder = AverageMeter()
+        _train_auc_recorder = AUCRecorder()
+        
+        self.model.train()
+        
+        for data in tqdm(self.train_loader):
+            self.optimizer.zero_grad()
+            
+            graph, img, label = data
+            
+            graph = graph.to(self.device)
+            img = img.to(self.device)
+            label = label.to(self.device)
+            
+            data = { 
+                GRAPH: graph,
+                IMAGE: img,
+                LABEL: label,
+            }
+            
+            
+            out = self.model(data)
+            loss = F.cross_entropy(out, data[LABEL])
+            
+            loss.backward() 
+            self.optimizer.step()
+                
+            acc = accuracy(out, data[LABEL])[0]
+            _train_loss_recorder.update(loss.item(), out.size(0))
+            _train_acc_recorder.update(acc.item(), out.size(0))
+            _train_auc_recorder.update(prediction=out[:,1],target=data[LABEL])
+
+        self.scheduler.step()
+        
+        train_loss = _train_loss_recorder.avg 
+        train_acc = _train_acc_recorder.avg 
+        train_auc = _train_auc_recorder.auc
+        
+        return train_loss, train_acc, train_auc
+    
+    
+    def _test_per_epoch(self, model):
+        _test_loss_recorder = AverageMeter()
+        _test_acc_recorder = AverageMeter()
+        _test_auc_recorder = AUCRecorder()
+        
+        with torch.no_grad():
+            model.eval()
+            
+            for data in tqdm(self.test_loader):
+                
+                graph, img, label = data
+                
+                graph = graph.to(self.device)
+                img = img.to(self.device)
+                label = label.to(self.device)
+                
+                data = { 
+                    GRAPH: graph,
+                    IMAGE: img,
+                    LABEL: label,
+                }
+            
+                out  = model(data)
+                
+
+                loss = F.cross_entropy(out, data[LABEL])
+                
+                acc = accuracy(out, data[LABEL])[0]
+
+                _test_loss_recorder.update(loss.item(), out.size(0))
+                _test_acc_recorder.update(acc.item(), out.size(0))
+                _test_auc_recorder.update(prediction=out[:,1],target=data[LABEL])
+        
+        test_loss = _test_loss_recorder.avg 
+        test_acc = _test_acc_recorder.avg 
+        test_auc = _test_auc_recorder.auc
+        
+        
+        return test_loss, test_acc, test_auc, _test_auc_recorder
+    
+    
