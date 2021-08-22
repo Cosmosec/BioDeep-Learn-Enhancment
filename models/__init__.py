@@ -12,4 +12,11 @@ from .resnet import(
 )
 
 from .mlp import MLP 
-# from .
+# from .trans_gnn import GCNViT
+# from .resnet_gnn import GCNResNet
+
+gnn_model_dict = {
+    'gintopk4' : GINTopK4,
+    'gintopk2' : GINTopK2,
+    'gcntopk4' : GCNTopK4,
+    'gcntopk2' : GCNTo
