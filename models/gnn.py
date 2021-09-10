@@ -169,3 +169,106 @@ class GCNTopK4(torch.nn.Module):
         self.bn3 = BatchNorm(hidden_features) 
         
         #add one more conv-pooling block, i.e., conv4 and pool4
+        self.conv4 = GraphConv(hidden_features, hidden_features)
+        self.pool4 = TopKPooling(hidden_features, ratio = pooling)
+        self.bn4 = BatchNorm(hidden_features) 
+        
+        self.linear = torch.nn.Linear(hidden_features*2, out_features)
+
+    def forward(self, data):
+        x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
+
+        x = self.conv1(x, edge_index)
+        x = self.activation(x)
+        x = self.bn1(x)
+
+
+        x, edge_index, edge_attr, batch, _, _ = self.pool1(x, edge_index, edge_attr, batch)
+        x1 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+
+        x = self.conv2(x, edge_index)
+        x = self.activation(x)
+        x = self.bn2(x)
+    
+
+        
+        x, edge_index, edge_attr, batch, _, _ = self.pool2(x, edge_index, edge_attr, batch)
+        x2 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+        
+        x = self.conv3(x, edge_index)
+        x = self.activation(x)
+        x = self.bn3(x)
+        
+        
+        x, edge_index, edge_attr, batch, _, _ = self.pool3(x, edge_index, edge_attr, batch)
+        x3 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+        
+        x = self.conv4(x, edge_index)
+        x = self.activation(x)
+        x = self.bn4(x)
+        
+        x, edge_index, edge_attr, batch, _, _ = self.pool4(x, edge_index, edge_attr, batch)
+        x4 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+
+        x = x1 + x2 + x3 + x4
+        
+        x = self.linear(x)
+        
+        return x
+
+    
+class GCNTopK2(torch.nn.Module):
+    def __init__(
+        self,
+        in_features: int, 
+        hidden_features: Optional[int] = 256, 
+        out_features: Optional[int] = 256,
+        pooling: Optional[float] = 0.5,
+        activation: Optional[str] = "gelu",
+    ):
+        super(GCNTopK2, self).__init__()        
+        
+        self.activation = ALL_ACT_LAYERS[activation]()
+
+        self.conv1 = GraphConv(in_features, hidden_features)
+        self.bn1 = BatchNorm(hidden_features) 
+        self.pool1 = TopKPooling(hidden_features, ratio = pooling) 
+        
+        self.conv2 = GraphConv(hidden_features, hidden_features)
+        self.pool2 = TopKPooling(hidden_features, ratio = pooling)
+        self.bn2 = BatchNorm(hidden_features) 
+
+        self.linear = torch.nn.Linear(hidden_features*2, out_features)
+
+
+        
+    def forward(self, data):
+        
+        x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
+
+        x = self.conv1(x, edge_index)
+        x = self.activation(x)
+        x = self.bn1(x)
+        
+        x, edge_index, edge_attr, batch, _, _ = self.pool1(x, edge_index, edge_attr, batch)
+        x1 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+
+        x = self.bn2(x)
+        x = self.activation(x)
+        x = self.conv2(x, edge_index)
+        
+        
+        x, edge_index, edge_attr, batch, _, _ = self.pool2(x, edge_index, edge_attr, batch)
+        x2 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
+        
+        x = x1 + x2
+        x = self.linear(x)
+
+      
+        return x
+
+
+
+if __name__ == '__main__':
+    model = GCNTopK2(in_features=223)
+    
