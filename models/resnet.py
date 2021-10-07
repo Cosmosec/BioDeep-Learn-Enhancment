@@ -12,4 +12,7 @@ Deep Residual Learning for Image Recognition. https://arxiv.org/abs/1512.03385
 import torch
 import torch.nn as nn
 
-__a
+__all__ = ['resnet32', 'resnet110', 'wide_resnet20_8']
+
+def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
+    """3x3 convolution with padd
