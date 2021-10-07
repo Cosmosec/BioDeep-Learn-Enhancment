@@ -15,4 +15,8 @@ import torch.nn as nn
 __all__ = ['resnet32', 'resnet110', 'wide_resnet20_8']
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
-    """3x3 convolution with padd
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=dilation, groups=groups, bias=False, dilation=dilation)
+
+def conv1x1(in
