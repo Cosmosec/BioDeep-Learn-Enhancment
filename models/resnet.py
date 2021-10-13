@@ -52,4 +52,15 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
 
         out = self.conv2(out)
-        out = sel
+        out = self.bn2(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = self.relu(out)
+
+        return out
+
+
+class Bottleneck(n
