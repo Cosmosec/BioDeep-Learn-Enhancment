@@ -44,4 +44,12 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def f
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = sel
