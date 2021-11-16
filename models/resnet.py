@@ -115,4 +115,7 @@ class ResNet(nn.Module):
         self._norm_layer = norm_layer
 
         self.inplanes = 16
-        
+        self.dilation = 1
+        if replace_stride_with_dilation is None:
+            # each element in the tuple indicates if we should replace
+            # the 2x2 
