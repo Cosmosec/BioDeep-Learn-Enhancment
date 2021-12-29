@@ -129,4 +129,8 @@ class ResNet(nn.Module):
         # self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1,
         #                        bias=False)
         self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3,
-                               bias=False) ### to fi
+                               bias=False) ### to fix 224
+        self.bn1 = nn.BatchNorm2d(self.inplanes)
+        self.relu = nn.ReLU(inplace=True)
+        # self.maxpool = nn.MaxPool2d()
+        sel
