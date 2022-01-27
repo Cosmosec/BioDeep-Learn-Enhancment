@@ -138,4 +138,8 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 64, layers[2], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1,1))
         self.fc = nn.Linear(64 * block.expansion, num_classes)
-        self.fc_dim = 64 * block
+        self.fc_dim = 64 * block.expansion  # 方便集成
+        self.KD = KD
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out',
