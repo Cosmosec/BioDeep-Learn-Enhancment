@@ -191,4 +191,10 @@ class ResNet(nn.Module):
         
         x = self.avgpool(x)           # B x 64 x 1 x 1
         x_f = x.view(x.size(0), -1)     # B x 64
-        x =
+        x = self.fc(x_f)                # B x num_classes
+        if self.KD == True:
+            return x_f, x
+        else:
+            return x
+            
+def resnet32(pretrained=Fa
