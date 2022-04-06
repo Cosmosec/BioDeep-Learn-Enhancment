@@ -197,4 +197,11 @@ class ResNet(nn.Module):
         else:
             return x
             
-def resnet32(pretrained=Fa
+def resnet32(pretrained=False, path=None, **kwargs):
+    """
+    Constructs a ResNet-32 model.
+    
+    Args:
+        pretrained (bool): If True, returns a model pre-trained.
+    """
+    
