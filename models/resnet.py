@@ -186,4 +186,9 @@ class ResNet(nn.Module):
         x = self.relu(x)                # B x 16 x 32 x 32
         
         x = self.layer1(x)              # B x 16 x 32 x 32
-        x = self.layer2(x)              # B x 32 x 16 x
+        x = self.layer2(x)              # B x 32 x 16 x 16
+        x = self.layer3(x)            # B x 64 x 8 x 8
+        
+        x = self.avgpool(x)           # B x 64 x 1 x 1
+        x_f = x.view(x.size(0), -1)     # B x 64
+        x =
