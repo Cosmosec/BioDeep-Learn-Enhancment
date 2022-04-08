@@ -215,4 +215,12 @@ def resnet110(pretrained=False, path=None, **kwargs):
     Constructs a ResNet-110 model.
     
     Args:
-        pretrained (bool): If True, returns a m
+        pretrained (bool): If True, returns a model pre-trained.
+    """
+    
+    model = ResNet(Bottleneck, [12, 12, 12], **kwargs)
+    if pretrained:
+        model.load_state_dict((torch.load(path))['state_dict'])
+    return model
+
+def
