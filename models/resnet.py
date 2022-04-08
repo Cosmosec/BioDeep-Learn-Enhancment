@@ -210,4 +210,9 @@ def resnet32(pretrained=False, path=None, **kwargs):
         model.load_state_dict((torch.load(path))['state_dict'])
     return model
 
-def resnet1
+def resnet110(pretrained=False, path=None, **kwargs):
+    """
+    Constructs a ResNet-110 model.
+    
+    Args:
+        pretrained (bool): If True, returns a m
