@@ -205,3 +205,9 @@ def resnet32(pretrained=False, path=None, **kwargs):
         pretrained (bool): If True, returns a model pre-trained.
     """
     
+    model = ResNet(BasicBlock, [5, 5, 5], **kwargs)
+    if pretrained:
+        model.load_state_dict((torch.load(path))['state_dict'])
+    return model
+
+def resnet1
