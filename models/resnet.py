@@ -223,4 +223,7 @@ def resnet110(pretrained=False, path=None, **kwargs):
         model.load_state_dict((torch.load(path))['state_dict'])
     return model
 
-def
+def wide_resnet20_8(pretrained=False, path=None, **kwargs):
+    
+    """Constructs a Wide ResNet-28-10 model.
+    The model is the same as ResNet except for the b
