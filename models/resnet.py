@@ -237,3 +237,13 @@ def wide_resnet20_8(pretrained=False, path=None, **kwargs):
     model = ResNet(Bottleneck, [2, 2, 2], width_per_group = 64 * 8, **kwargs)
     if pretrained:
         model.load_state_dict((torch.load(path))['state_dict'])
+    return model
+
+
+if __name__ == "__main__":
+
+    model = resnet32()
+
+    a = torch.randn(32, 3, 224, 224)
+    output = model(a)
+    print(output.shape)
