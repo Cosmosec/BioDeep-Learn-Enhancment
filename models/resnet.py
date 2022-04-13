@@ -226,4 +226,6 @@ def resnet110(pretrained=False, path=None, **kwargs):
 def wide_resnet20_8(pretrained=False, path=None, **kwargs):
     
     """Constructs a Wide ResNet-28-10 model.
-    The model is the same as ResNet except for the b
+    The model is the same as ResNet except for the bottleneck number of channels
+    which is twice larger in every block. The number of channels in outer 1x1
+    convolutions is the same, e.g. last block
