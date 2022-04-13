@@ -231,4 +231,9 @@ def wide_resnet20_8(pretrained=False, path=None, **kwargs):
     convolutions is the same, e.g. last block in ResNet-50 has 2048-512-2048
     channels, and in Wide ResNet-50-2 has 2048-1024-2048.
     Args:
-        pretrained (bool): If True, returns a model pre-t
+        pretrained (bool): If True, returns a model pre-trained.
+    """
+    
+    model = ResNet(Bottleneck, [2, 2, 2], width_per_group = 64 * 8, **kwargs)
+    if pretrained:
+        model.load_state_dict((torch.load(path))['state_dict'])
