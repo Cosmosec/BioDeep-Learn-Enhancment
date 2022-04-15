@@ -59,3 +59,60 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
+
+def accuracy(output, target, topk=(1,)):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = target.size(0)
+
+    _, pred = output.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+        res.append(correct_k.mul_(100.0 / batch_size))
+    return res
+
+
+class AUCRecorder(object):
+    def __init__(self):
+        self.prediction = []
+        self.target = []
+        
+    def update(self,prediction,target):
+        self.prediction = self.prediction + prediction.tolist()
+        self.target = self.target + target.tolist()
+    
+    @property
+    def auc(self):
+        prediction = np.array(self.prediction)
+        target = np.array(self.target)
+        fpr, tpr, thresholds = metrics.roc_curve(target, prediction, pos_label=1)
+        auc = metrics.auc(fpr, tpr)  
+        return auc
+    
+    def draw_roc(self, path):
+        prediction = np.array(self.prediction)
+        target = np.array(self.target)
+        fpr, tpr, thresholds = metrics.roc_curve(target, prediction, pos_label=1)
+        auc = metrics.auc(fpr, tpr)  
+        
+        plt.figure(figsize=(4.5,4.5))
+
+        x = np.arange(0,1.01,0.01)
+
+        plt.plot(x,x,ls="--",color='grey',alpha=0.5)
+        plt.plot(fpr,tpr,label='auc {:.3f}'.format(auc))
+        plt.ylabel('True Positive Rate')
+        plt.xlabel('False Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc='lower right')
+        plt.savefig(path,dpi=300)
+
+
+        
+
+
