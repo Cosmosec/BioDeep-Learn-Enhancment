@@ -10,4 +10,7 @@ For histology, Gigapixel medical images provide massive data to be mined. This i
 #### Graph data is available at [Link](https://zenodo.org/record/6683652#.YrLjLC-KFtQ)
 
 ### 3. Code Structure
-Each sec
+Each section of our code serves a specific purpose:
+- [`mm_model.py`](mm_model.py): Model construction
+- [`mm_trainer.py`](mm_trainer.py): Training code
+- [`mm_evaluater.py`](mm_evaluater.py):
