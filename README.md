@@ -13,4 +13,6 @@ For histology, Gigapixel medical images provide massive data to be mined. This i
 Each section of our code serves a specific purpose:
 - [`mm_model.py`](mm_model.py): Model construction
 - [`mm_trainer.py`](mm_trainer.py): Training code
-- [`mm_evaluater.py`](mm_evaluater.py):
+- [`mm_evaluater.py`](mm_evaluater.py): Evaluation codes for both patch and WSI levels
+- [`mm_dataset.py`](mm_dataset.py): Dataset loader
+- [`main.py`](main.py): main functio
