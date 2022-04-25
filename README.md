@@ -6,4 +6,8 @@ This is an implementation of our fusion model that enhances global image-level r
 For histology, Gigapixel medical images provide massive data to be mined. This includes morphological textures and spatial information. Our solution optimally integrates features from global images and cell graphs through a fusion layer, improving over solutions that heavily rely on CNNs for global pixel-level analysis. This solution allows for a more comprehensive representation in downstream oncology tasks such as biomarker predictions.
 
 ### 2. Dataset
-#### Images are avaiable a
+#### Images are avaiable at [Link](https://zenodo.org/record/2530835#.YrLH-S-KFtQ)
+#### Graph data is available at [Link](https://zenodo.org/record/6683652#.YrLjLC-KFtQ)
+
+### 3. Code Structure
+Each sec
