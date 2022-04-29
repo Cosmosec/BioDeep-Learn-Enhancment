@@ -19,4 +19,11 @@ Each section of our code serves a specific purpose:
 
 The example configuration files are in the `config/` directory for CRC and STAD datasets. Adjust the yaml file when running the codes on your devices.
 
-To run the train
+To run the training script [`main.py`](main.py):
+```bash
+python main.py --config_path PATH_TO_CONFIG
+```
+
+To run the evaluation script [`mm_evaluater.py`](mm_evaluater.py):
+```bash
+python
