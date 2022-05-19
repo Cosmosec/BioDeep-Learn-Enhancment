@@ -26,4 +26,8 @@ python main.py --config_path PATH_TO_CONFIG
 
 To run the evaluation script [`mm_evaluater.py`](mm_evaluater.py):
 ```bash
-python
+python mm_evaluater.py --gpu_id 0 --path PATH_TO_THE_OUTPUT --choice acc
+```
+
+#### Contributions
+This repository is maintained by Cosmosec. If you find our paper, co
