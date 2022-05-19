@@ -30,4 +30,7 @@ python mm_evaluater.py --gpu_id 0 --path PATH_TO_THE_OUTPUT --choice acc
 ```
 
 #### Contributions
-This repository is maintained by Cosmosec. If you find our paper, co
+This repository is maintained by Cosmosec. If you find our paper, code helpful to your research. Please consider citing our paper: 
+```
+@article{shen2022gnns,
+  title={How GNNs Facilitate CNNs in Mining Geometric Information from Large-
